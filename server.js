@@ -56,7 +56,7 @@ app.post('/api/notes', (req, res) => {
                 parsedNotes.push(req.body)
 
                 // Write updated Notes back to the file
-                fs.write(
+                fs.writeFile(
                     './db/db.json',
                     //JSON.stringify(parsedNotes, null, 4),
                     JSON.stringify(parsedNotes, null, 4),
