@@ -1,23 +1,21 @@
 // Import express package
 const express = require('express');
-const path = require('path');
+// Import Routes
+const apiRoutes = require('./routes/apiRoutes');
+const htmlRoutes = require('./routes/htmlRoutes');
+
 
 
 // Initialize our app variable by setting it to the value of express()
 const PORT = process.env.PORT || 3001;
 const app = express();
 
-app.get('/', (req, res) => {
-    // `res.sendFile` is Express' way of sending a file
-    // `__dirname` is a variable that always returns the directory that your server is running in
-    res.sendFile(path.join(__dirname + '/index.html'));
-  });
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+app.use(express.static('public'));
+app.use('/api', apiRoutes);
+app.use('/', htmlRoutes);
 
-app.get('/notes', (req, res) => {
-    // `res.sendFile` is Express' way of sending a file
-  // `__dirname` is a variable that always returns the directory that your server is running in
-  res.sendFile(path.join(__dirname + '/notes.html'));
-})/
 
 app.listen(PORT, () => {
     console.log(`API server now on port ${PORT}`);
