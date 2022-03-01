@@ -5,7 +5,8 @@ const noteData = require('./db/db.json');
 const fs = require('fs');
 
 // Helper method for generating unique ids
-// const uuid = require('./helpers/uuid');
+const uuid = require('./helpers/uuid');
+
 
 
 
@@ -13,54 +14,73 @@ const fs = require('fs');
 const PORT = process.env.PORT || 3001;
 const app = express();
 
-app.use(express.static('public'));
+
 
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
+app.use(express.static('public'));
 
 
 app.get('/', (req, res) => {
     // `res.sendFile` is Express' way of sending a file
     // `__dirname` is a variable that always returns the directory that your server is running in
     res.sendFile(path.join(__dirname + '/index.html'));
-  });
+});
 
 app.get('/notes', (req, res) => {
     // `res.sendFile` is Express' way of sending a file
-  // `__dirname` is a variable that always returns the directory that your server is running in
-  res.sendFile(path.join(__dirname + '/public/notes.html'));
+    // `__dirname` is a variable that always returns the directory that your server is running in
+    res.sendFile(path.join(__dirname + '/public/notes.html'));
 });
 
 app.get('/api/notes', (req, res) => res.json(noteData));
 
 app.post('/api/notes', (req, res) => {
+    const { title, text } = req.body;
 
-// Obtain existing reviews
-    fs.readFile('./db/db.json', 'utf8', (err, data) => {
-        if (err) {
-            console.error(err);
-        } else {
-            const parsedNotes = JSON.parse(data);
+    if (title && text) {
+        const newNote = {
+            title,
+            text,
+            note_id: uuid(),
+        };
 
-            // add a new note
-            parsedNotes.push(req.body)
+        // Obtain existing reviews
+        fs.readFile('./db/db.json', 'UTF-8', (err, data) => {
+            if (err) {
+                console.error(err);
+            } else {
+                const parsedNotes = JSON.parse(data);
 
-            // Write updated Notes back to the file
-            fs.write(
-                './db/db.json',
-                JSON.stringify(parsedNotes, null, 4),
-                (writeErr) =>
-                writeErr
-                    ? console.error(writeErr)
-                    : console.info('Succesfully updated notes!')
-            )
+                // add a new note
+                parsedNotes.push(req.body)
+
+                // Write updated Notes back to the file
+                fs.write(
+                    './db/db.json',
+                    //JSON.stringify(parsedNotes, null, 4),
+                    JSON.stringify(parsedNotes, null, 4),
+                    (writeErr) =>
+                        writeErr
+                            ? console.error(writeErr)
+                            : console.info('Succesfully updated notes!')
+                )
+            }
+        })
+
+    ;
+
+
+        const response = {
+            status: 'success',
+            body: newNote,
         }
-    });
 
-  
-
-    console.log(req.body);
-    res.json(req.body);
+        console.log(response);
+        res.json(response);
+    } else {
+        res.json('Error in posting note');
+    }
 });
 
 app.listen(PORT, () => {
