@@ -2,6 +2,7 @@
 const express = require('express');
 
 // Initialize our app variable by setting it to the value of express()
+const PORT = process.env.PORT || 3001;
 const app = express();
 
 app.get('/notes', (req, res) => {
@@ -10,8 +11,8 @@ app.get('/notes', (req, res) => {
   res.sendFile(__dirname + '/public/assets/notes.html')
 })
 
-app.listen(3001, () => {
-    console.log(`API server now on port 3001!`);
+app.listen(PORT, () => {
+    console.log(`API server now on port ${PORT}`);
 });
 
 
