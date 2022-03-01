@@ -5,10 +5,16 @@ const express = require('express');
 const PORT = process.env.PORT || 3001;
 const app = express();
 
+app.get('*', (req, res) => {
+    // `res.sendFile` is Express' way of sending a file
+    // `__dirname` is a variable that always returns the directory that your server is running in
+    res.sendFile(__dirname + 'index.html');
+  });
+
 app.get('/notes', (req, res) => {
     // `res.sendFile` is Express' way of sending a file
   // `__dirname` is a variable that always returns the directory that your server is running in
-  res.sendFile(__dirname + '/public/assets/notes.html')
+  res.sendFile(__dirname + '/notes.html')
 })
 
 app.listen(PORT, () => {
