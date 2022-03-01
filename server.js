@@ -83,10 +83,6 @@ app.post('/api/notes', (req, res) => {
     }
 });
 
-
-app.listen(PORT, () => {
-    console.log(`API server now on port ${PORT}`);
-});
 app.delete("/api/notes/:id", (req, res) => {
     let noteDb = JSON.parse(fs.readFileSync("./db/db.json", "utf8"));
     let noteId = (req.body.note_id).toString();
@@ -95,6 +91,12 @@ app.delete("/api/notes/:id", (req, res) => {
     })
     fs.writeFileSync("./db/db.json", JSON.stringify(noteDb));
     res.json(noteDb);
+});
+
+
+
+app.listen(PORT, () => {
+    console.log(`API server now on port ${PORT}`);
 });
 
 
