@@ -1,6 +1,12 @@
 // Import express package
 const express = require('express');
 const path = require('path');
+const noteData = require('./db/db.json');
+const fs = require('fs');
+
+// Helper method for generating unique ids
+// const uuid = require('./helpers/uuid');
+
 
 
 // Initialize our app variable by setting it to the value of express()
@@ -23,6 +29,38 @@ app.get('/notes', (req, res) => {
     // `res.sendFile` is Express' way of sending a file
   // `__dirname` is a variable that always returns the directory that your server is running in
   res.sendFile(path.join(__dirname + '/public/notes.html'));
+});
+
+app.get('/api/notes', (req, res) => res.json(noteData));
+
+app.post('/api/notes', (req, res) => {
+
+// Obtain existing reviews
+    fs.readFile('./db/db.json', 'utf8', (err, data) => {
+        if (err) {
+            console.error(err);
+        } else {
+            const parsedNotes = JSON.parse(data);
+
+            // add a new note
+            parsedNotes.push(req.body)
+
+            // Write updated Notes back to the file
+            fs.write(
+                './db/db.json',
+                JSON.stringify(parsedNotes, null, 4),
+                (writeErr) =>
+                writeErr
+                    ? console.error(writeErr)
+                    : console.info('Succesfully updated notes!')
+            )
+        }
+    });
+
+  
+
+    console.log(req.body);
+    res.json(req.body);
 });
 
 app.listen(PORT, () => {
